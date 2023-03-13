@@ -7,7 +7,6 @@ let itemData = [
     discount: 5,
     tax: 18,
     quantity: 5,
-    visible: true,
   },
   {
     id: 2,
@@ -17,7 +16,6 @@ let itemData = [
     discount: 5,
     tax: 18,
     quantity: 5,
-    visible: true,
   },
   {
     id: 3,
@@ -27,7 +25,6 @@ let itemData = [
     discount: 5,
     tax: 18,
     quantity: 5,
-    visible: true,
   },
   {
     id: 4,
@@ -37,7 +34,6 @@ let itemData = [
     discount: 5,
     tax: 18,
     quantity: 5,
-    visible: true,
   },
   {
     id: 5,
@@ -47,7 +43,6 @@ let itemData = [
     discount: 5,
     tax: 18,
     quantity: 5,
-    visible: true,
   },
 ];
 
@@ -67,18 +62,38 @@ function loadItems() {
       });
     },
     addItem(id) {
+      // if (this.cartItems.length > 0) {
+      //   const newItemIndex = this.cartItems.findIndex((item) => item.id === id);
+      //   if (newItemIndex !== -1) {
+      //     let index = this.cartItems.findIndex((item) => item.id === id);
+      //     this.cartItems[index].quantity += 1;
+      //   } else {
+      //     this.cartItems.push(itemData[newItemIndex]);
+      //   }
+      //   this.updateTotal();
+      //   return;
+      // }
+      // this.cartItems.push(itemData[newItemIndex]);
+      // this.updateTotal();
       const cartItem = this.cartItems.find((item) => item.id === id);
       if (!cartItem) {
         const newItem = itemData.find((item2) => item2.id === id);
         newItem.quantity = 1;
         this.cartItems.push(newItem);
+        // this.cartItems.push({
+        //   id: newItem.id,
+        //   name: newItem.name,
+        //   image: newItem.image,
+        //   quantity: 1,
+        //   price: newItem.price,
+        //   discount: newItem.discount,
+        //   tax: newItem.tax,
+        //   visible: newItem.tax,
+        // });
       } else {
-        this.cartItems = this.cartItems.map((item) => {
-          if (item.id !== id) return item;
-          item.quantity += 1;
-          return item;
-        });
+        cartItem.quantity += 1;
       }
+      console.log(itemData);
       this.updateTotal();
     },
 
@@ -96,10 +111,16 @@ function loadItems() {
       this.updateTotal();
     },
     reduceQuantity(cartItem) {
+      if (cartItem.quantity == 1) {
+        this.cartItems.splice(this.cartItems.indexOf(cart), 1);
+      }
       cartItem.quantity -= 1;
       this.updateTotal();
     },
     changeQuantity(event, cart) {
+      if (event.target.value < 1) {
+        this.cartItems.splice(this.cartItems.indexOf(cart), 1);
+      }
       cart.quantity = event.target.value;
       this.updateTotal();
     },
