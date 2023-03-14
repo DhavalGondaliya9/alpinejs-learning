@@ -1,97 +1,100 @@
 let itemData = [
     {
-      id: 1,
-      name: "Kit Kat",
-      image: "https://picsum.photos/50/50",
-      price: 10,
-      discount: 5,
-      tax: 18,
-      quantity: 5,
+        id: 1,
+        name: "Kit Kat",
+        image: "https://picsum.photos/50/50",
+        price: 10,
+        discount: 5,
+        tax: 18,
+        quantity: 5,
     },
     {
-      id: 2,
-      name: "Dairy Milk",
-      image: "https://picsum.photos/50/50",
-      price: 15,
-      discount: 5,
-      tax: 18,
-      quantity: 5,
+        id: 2,
+        name: "Dairy Milk",
+        image: "https://picsum.photos/50/50",
+        price: 15,
+        discount: 5,
+        tax: 18,
+        quantity: 5,
     },
     {
-      id: 3,
-      name: "Juice",
-      image: "https://picsum.photos/50/50",
-      price: 25,
-      discount: 5,
-      tax: 18,
-      quantity: 5,
+        id: 3,
+        name: "Juice",
+        image: "https://picsum.photos/50/50",
+        price: 25,
+        discount: 5,
+        tax: 18,
+        quantity: 5,
     },
     {
-      id: 4,
-      name: "Waffle",
-      price: 60,
-      image: "https://picsum.photos/50/50",
-      discount: 5,
-      tax: 18,
-      quantity: 5,
+        id: 4,
+        name: "Waffle",
+        price: 60,
+        image: "https://picsum.photos/50/50",
+        discount: 5,
+        tax: 18,
+        quantity: 5,
     },
     {
-      id: 5,
-      name: "Biscuit",
-      price: 80,
-      image: "https://picsum.photos/50/50",
-      discount: 5,
-      tax: 18,
-      quantity: 5,
+        id: 5,
+        name: "Biscuit",
+        price: 80,
+        image: "https://picsum.photos/50/50",
+        discount: 5,
+        tax: 18,
+        quantity: 5,
     },
 ];
 
 function loadItems() {
     return {
         search: "",
-        itemExist : false,
         cartItems: [],
         subtotal: 0,
         discount: 0,
         tax: 0,
         total: 0,
         itemData: itemData,
-        filteredItems() {
-            this.itemExist = true;
+
+        get filteredItems() {
             return this.itemData.filter((item) => {
-                let result =  (item.name + item.price)
+                return (item.name + "$" + item.price)
                 .toLowerCase()
                 .includes(this.search.toLowerCase());
-                if (result) {
-                    this.itemExist = false;
-                }
-                return result;
             });
         },
+
         addToCart(id) {
             let cartItem = this.cartItems.find((item) => item.id === id);
-            let index = itemData.findIndex((item) => item.id === id);
+            let index = this.itemData.findIndex((item) => item.id === id);
             let newItem = this.itemData[index];
-            if (this.itemData[index].quantity == 0) {
-                alert("sold out this product");
-                return false;
-            }
-            this.itemData[index].quantity -= 1;
             if (!cartItem) {
                 this.cartItems.push({
-                    id: newItem.id,
-                    name: newItem.name,
-                    image: newItem.image,
-                    quantity: 1,
-                    price: newItem.price,
-                    discount: newItem.discount,
-                    tax: newItem.tax,
-                    visible: newItem.tax,
+                id: newItem.id,
+                name: newItem.name,
+                image: newItem.image,
+                quantity: 1,
+                price: newItem.price,
+                discount: newItem.discount,
+                tax: newItem.tax,
                 });
             } else {
+                if (this.itemData[index].quantity == cartItem.quantity) {
+                    alert("sold out this product");
+                    return;
+                }
                 cartItem.quantity += 1;
             }
+
             this.updateTotal();
+        },
+
+        cartQuantity(id) {
+            let cart = this.cartItems.find((item) => item.id === id);
+            if (cart) {
+                return cart.quantity;
+            }
+            return 0;
         },
 
         removeItem(cartItem) {
@@ -100,61 +103,44 @@ function loadItems() {
                     this.cartItems.splice(this.cartItems.indexOf(cartItem.id), 1);
                     this.updateTotal();
                 }
-                  return;
-               }
-            let item = this.getItem(cartItem.id);
-            item.quantity += cartItem.quantity;
+                return;
+            }
             this.cartItems.splice(this.cartItems.indexOf(cartItem.id), 1);
             this.updateTotal();
         },
 
         clearAll() {
-            this.cartItems.find((value, i) => {
-                this.itemData.find((x) => x.id === value.id).quantity += value.quantity;
-            });
             this.cartItems = [];
             this.updateTotal();
         },
 
         addQuantity(cartItem) {
             let item = this.getItem(cartItem.id);
-            if (item.quantity == 0) {
+            if (item.quantity == cartItem.quantity) {
                 alert("only " + cartItem.quantity + " quantity available");
                 return false;
             }
-            item.quantity -= 1;
             cartItem.quantity += 1;
             this.updateTotal();
         },
 
         reduceQuantity(cartItem) {
-           let item = this.getItem(cartItem.id);
-            console.log(cartItem.quantity);
             if (cartItem.quantity == 1) {
                 this.cartItems.splice(this.cartItems.indexOf(cartItem), 1);
             }
-            item.quantity += 1;
             cartItem.quantity -= 1;
             this.updateTotal();
         },
 
         changeQuantity(event, cart) {
             let item = this.getItem(cart.id);
-            let totalQuantity = parseInt(item.quantity + cart.quantity);
-            if (totalQuantity < event.target.value) {
-                alert("sold out");
+            if (item.quantity < event.target.value) {
+                alert("only " + item.quantity + " quantity available");
                 event.target.value = cart.quantity;
                 return false;
             }
             if (event.target.value < 1) {
-                item.quantity += cart.quantity;
                 this.cartItems.splice(this.cartItems.indexOf(cart), 1);
-            }
-            if (cart.quantity > event.target.value) {
-                item.quantity += cart.quantity - event.target.value;
-            }
-            if (cart.quantity < event.target.value) {
-                item.quantity -= event.target.value - cart.quantity;
             }
             cart.quantity = event.target.value;
             this.updateTotal();

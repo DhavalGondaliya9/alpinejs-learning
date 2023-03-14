@@ -46,12 +46,12 @@
                     <div id="items" style="display: contents">
                         <template x-for="item in filteredItems" :key="item.id">
                             <div @click="addToCart(item.id)"
-                                class="transform hover:scale-105 transition duration-300 px-3 py-3 flex flex-col border border-gray-200 rounded-md h-32 justify-between" x-bind:class="item.quantity==0 ?'border-red-500' : ''">
+                                class="transform hover:scale-105 transition duration-300 px-3 py-3 flex flex-col border border-gray-200 rounded-md h-32 justify-between" x-bind:class="item.quantity==cartQuantity(item.id) ?'border-red-500' : ''">
                                 <div>
                                     <div class="font-bold text-gray-800 item-name" x-text="item.name">
                                     </div>
                                     <span class="font-light text-sm text-gray-400">
-                                        Quantity : <span class="item-quantity" x-text="item.quantity"></span>
+                                        Quantity : <span class="item-quantity" x-text="item.quantity - cartQuantity(item.id)"></span>
                                     </span>
                                 </div>
                                 <div class="flex flex-row justify-between items-center">
@@ -70,9 +70,11 @@
                         </template>
                     </div>
                     <div></div>
-                    <div class="grid-cols-12" x-show="itemExist" id="page_not_found">
-                        <h1 class='text-center mt-40 text-2xl'>Product Not found</h1>
-                    </div>
+                    <template x-if="filteredItems.length == 0">
+                        <div class="grid-cols-12" id="page_not_found">
+                            <h1 class='text-center mt-40 text-2xl'>Product Not found</h1>
+                        </div>
+                    </template>
                 </div>
             </div>
             <div class="w-full lg:w-2/5">
