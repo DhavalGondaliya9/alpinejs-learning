@@ -1,11 +1,8 @@
-function loadItems() {
+let cartItems = [];
+function displayItems() {
     return {
         search: "",
-        cartItems: [],
-        subtotal: 0,
-        discount: 0,
-        tax: 0,
-        total: 0,
+        cartItems: cartItems,
 
         get filteredItems() {
             return items.filter((item) => {
@@ -15,6 +12,22 @@ function loadItems() {
             });
         },
 
+        cartQuantity(id) {
+            let cart = this.cartItems.find((item) => item.id === id);
+            if (cart) {
+                return cart.quantity;
+            }
+            return 0;
+        },
+    };
+}
+function displayCart() {
+    return {
+        cartItems: cartItems,
+        subtotal: 0,
+        discount: 0,
+        tax: 0,
+        total: 0,
         addToCart(id) {
             let cartItem = this.cartItems.find((item) => item.id === id);
             let index = items.findIndex((item) => item.id === id);
@@ -36,16 +49,7 @@ function loadItems() {
                 }
                 cartItem.quantity += 1;
             }
-
             this.updateTotal();
-        },
-
-        cartQuantity(id) {
-            let cart = this.cartItems.find((item) => item.id === id);
-            if (cart) {
-                return cart.quantity;
-            }
-            return 0;
         },
 
         removeItem(cartItem) {
@@ -61,7 +65,7 @@ function loadItems() {
         },
 
         clearAll() {
-            this.cartItems = [];
+            this.cartItems.splice(0, this.cartItems.length);
             this.updateTotal();
         },
 
@@ -106,7 +110,7 @@ function loadItems() {
             this.total = 0;
             this.discount = 0;
             this.tax = 0;
-            this.cartItems = this.cartItems.map((item) => {
+            cartItems = this.cartItems.map((item) => {
                 this.subtotal += item.price * item.quantity;
                 this.discount += (item.price * item.quantity * item.discount) / 100;
                 this.tax = (this.subtotal * 18) / 100;
@@ -118,5 +122,6 @@ function loadItems() {
             this.tax = this.tax.toFixed(2);
             this.total = this.total.toFixed(2);
         },
+
     };
 }
