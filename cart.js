@@ -1,51 +1,3 @@
-let itemData = [
-    {
-        id: 1,
-        name: "Kit Kat",
-        image: "https://picsum.photos/50/50",
-        price: 10,
-        discount: 5,
-        tax: 18,
-        quantity: 5,
-    },
-    {
-        id: 2,
-        name: "Dairy Milk",
-        image: "https://picsum.photos/50/50",
-        price: 15,
-        discount: 5,
-        tax: 18,
-        quantity: 5,
-    },
-    {
-        id: 3,
-        name: "Juice",
-        image: "https://picsum.photos/50/50",
-        price: 25,
-        discount: 5,
-        tax: 18,
-        quantity: 5,
-    },
-    {
-        id: 4,
-        name: "Waffle",
-        price: 60,
-        image: "https://picsum.photos/50/50",
-        discount: 5,
-        tax: 18,
-        quantity: 5,
-    },
-    {
-        id: 5,
-        name: "Biscuit",
-        price: 80,
-        image: "https://picsum.photos/50/50",
-        discount: 5,
-        tax: 18,
-        quantity: 5,
-    },
-];
-
 function loadItems() {
     return {
         search: "",
@@ -54,10 +6,9 @@ function loadItems() {
         discount: 0,
         tax: 0,
         total: 0,
-        itemData: itemData,
 
         get filteredItems() {
-            return this.itemData.filter((item) => {
+            return items.filter((item) => {
                 return (item.name + "$" + item.price)
                 .toLowerCase()
                 .includes(this.search.toLowerCase());
@@ -66,8 +17,8 @@ function loadItems() {
 
         addToCart(id) {
             let cartItem = this.cartItems.find((item) => item.id === id);
-            let index = this.itemData.findIndex((item) => item.id === id);
-            let newItem = this.itemData[index];
+            let index = items.findIndex((item) => item.id === id);
+            let newItem = items[index];
             if (!cartItem) {
                 this.cartItems.push({
                 id: newItem.id,
@@ -79,7 +30,7 @@ function loadItems() {
                 tax: newItem.tax,
                 });
             } else {
-                if (this.itemData[index].quantity == cartItem.quantity) {
+                if (items[index].quantity == cartItem.quantity) {
                     alert("sold out this product");
                     return;
                 }
@@ -147,7 +98,7 @@ function loadItems() {
         },
 
         getItem(id) {
-            return this.itemData.find((item) => item.id === id);
+            return items.find((item) => item.id === id);
         },
 
         updateTotal() {
