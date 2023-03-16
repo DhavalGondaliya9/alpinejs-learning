@@ -1,16 +1,27 @@
-let cartItems = [];
+let cartItems   = [];
+let subtotal    = 0;
+let discount    = 0;
+let tax         = 0;
+let total       = 0;
 function displayItems() {
     return {
         search: "",
-        cartItems: cartItems,
 
         get filteredItems() {
             return items.filter((item) => {
-                return (item.name + "$" + item.price)
-                .toLowerCase()
-                .includes(this.search.toLowerCase());
+                return (item.name + "$" + item.price).toLowerCase().includes(this.search.toLowerCase());
             });
         },
+    };
+}
+
+function displayCart() {
+    return {
+        cartItems: cartItems,
+        subtotal: 0,
+        discount: 0,
+        tax: 0,
+        total: 0,
 
         cartQuantity(id) {
             let cart = this.cartItems.find((item) => item.id === id);
@@ -19,15 +30,7 @@ function displayItems() {
             }
             return 0;
         },
-    };
-}
-function displayCart() {
-    return {
-        cartItems: cartItems,
-        subtotal: 0,
-        discount: 0,
-        tax: 0,
-        total: 0,
+
         addToCart(id) {
             let cartItem = this.cartItems.find((item) => item.id === id);
             let index = items.findIndex((item) => item.id === id);
@@ -106,21 +109,20 @@ function displayCart() {
         },
 
         updateTotal() {
-            this.subtotal = 0;
-            this.total = 0;
-            this.discount = 0;
-            this.tax = 0;
-            cartItems = this.cartItems.map((item) => {
-                this.subtotal += item.price * item.quantity;
-                this.discount += (item.price * item.quantity * item.discount) / 100;
-                this.tax = (this.subtotal * 18) / 100;
-                this.total = this.subtotal + this.tax - this.discount;
-                return item;
+            subtotal = 0;
+            total = 0;
+            discount = 0;
+            tax = 0;
+            this.cartItems.map((item) => {
+                subtotal += item.price * item.quantity;
+                discount += (item.price * item.quantity * item.discount) / 100;
+                tax = (subtotal * 18) / 100;
+                total = subtotal + tax - discount;
             });
-            this.subtotal = this.subtotal.toFixed(2);
-            this.discount = this.discount.toFixed(2);
-            this.tax = this.tax.toFixed(2);
-            this.total = this.total.toFixed(2);
+            this.subtotal = subtotal.toFixed(2);
+            this.discount = discount.toFixed(2);
+            this.tax = tax.toFixed(2);
+            this.total = total.toFixed(2);
         },
 
     };
